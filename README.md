@@ -26,7 +26,7 @@ L'icône `♪` apparaît dans la barre de menu. Le menu propose le mode de redir
 
 ### Pré-requis
 
-- macOS 12 (Monterey) ou plus récent
+- macOS 13 (Ventura) ou plus récent
 - Xcode 14+
 
 ### Compilation
