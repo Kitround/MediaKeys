@@ -1,35 +1,38 @@
 # MediaKeys
 
-Petite app macOS qui vit dans la barre de menu et redirige les touches média du clavier (Play/Pause, Suivant, Précédent) vers **Spotify**, **Apple Music**, ou les deux — sans latence, et avec un routage intelligent quand les deux apps tournent.
+Tiny macOS menu bar app that routes the keyboard media keys (Play/Pause, Next, Previous) to **Spotify**, **Apple Music**, or both — with zero latency and smart routing when both apps are running.
 
-> Pourquoi ? Parce que macOS envoie par défaut les touches média à l'app qui a décidé de les prendre en premier (souvent Apple Music, même quand on écoute Spotify). MediaKeys reprend la main et choisit la bonne cible.
+> Available in **English** and **French** (auto-detected from your system language).
 
----
-
-## Fonctionnalités
-
-- 🎛️ **Routage configurable** : Spotify uniquement, Apple Music uniquement, ou les deux.
-- 🧠 **Mode intelligent** (`Spotify + Apple Music`) : la commande va à l'app qui joue effectivement, déterminé en temps réel.
-- ⚡ **Zéro latence** : l'état de lecture est suivi passivement via les notifications distribuées émises par Spotify et Apple Music, donc aucun appel AppleScript bloquant au moment du clic.
-- 🧊 **Discret** : vit dans la barre de menu (`LSUIElement`), aucune fenêtre, aucun dock icon.
-- ⏸️ **Pause globale** : un clic pour suspendre l'interception et laisser le système gérer les touches média.
+> Why? macOS sends media keys to whichever app grabbed them first (often Apple Music, even when you're listening to Spotify). MediaKeys takes over and picks the right target.
 
 ---
 
-## Captures
+## Features
 
-L'icône `♪` apparaît dans la barre de menu. Le menu propose le mode de redirection et la pause globale.
+- 🎛️ **Configurable routing**: Spotify only, Apple Music only, or both.
+- 🧠 **Smart mode** (`Spotify + Apple Music`): commands go to the app that's actually playing, decided in real time.
+- ⚡ **Zero latency**: playback state is tracked passively via the distributed notifications Spotify and Apple Music broadcast — no blocking AppleScript call at click time.
+- 🧊 **Discreet**: lives in the menu bar (`LSUIElement`), no window, no dock icon.
+- ⏸️ **Global pause**: one click to suspend interception and let the system handle media keys.
+- 🌐 **Localized**: English (default) and French.
+
+---
+
+## Screenshots
+
+A `♪` icon appears in the menu bar. The menu offers the redirect mode and global pause.
 
 ---
 
 ## Installation
 
-### Pré-requis
+### Requirements
 
-- macOS 13 (Ventura) ou plus récent
-- Xcode 14+
+- macOS 13 (Ventura) or newer
+- Xcode 15+ (for building from source — String Catalogs)
 
-### Compilation
+### Build
 
 ```bash
 git clone https://github.com/Kitround/MediaKeys.git
@@ -37,49 +40,57 @@ cd MediaKeys
 open MediaKeys.xcodeproj
 ```
 
-Puis dans Xcode : **Product → Run** (⌘R).
+Then in Xcode: **Product → Run** (⌘R).
 
-### Première utilisation
+### First launch
 
-Au premier lancement, macOS demandera l'autorisation **Accessibilité** — c'est nécessaire pour intercepter les événements clavier système. Va dans **Réglages Système → Confidentialité et sécurité → Accessibilité** et active MediaKeys.
+On first launch macOS will prompt for **Accessibility** permission — required to intercept system keyboard events. Go to **System Settings → Privacy & Security → Accessibility** and enable MediaKeys.
 
 ---
 
 ## Architecture
 
-| Fichier | Rôle |
+| File | Role |
 |---|---|
-| [`AppDelegate.swift`](MediaKeys/AppDelegate.swift) | Point d'entrée, cycle de vie |
-| [`EventTapManager.swift`](MediaKeys/EventTapManager.swift) | Capture clavier via `CGEvent.tapCreate` |
-| [`MediaCommandSender.swift`](MediaKeys/MediaCommandSender.swift) | Routage + envoi des commandes via `osascript` |
-| [`PreferencesManager.swift`](MediaKeys/PreferencesManager.swift) | Persistance (`UserDefaults`) |
-| [`StatusMenuController.swift`](MediaKeys/StatusMenuController.swift) | UI barre de menu |
+| [`AppDelegate.swift`](MediaKeys/AppDelegate.swift) | Entry point, lifecycle |
+| [`EventTapManager.swift`](MediaKeys/EventTapManager.swift) | Keyboard capture via `CGEvent.tapCreate` |
+| [`MediaCommandSender.swift`](MediaKeys/MediaCommandSender.swift) | Routing + command dispatch via `osascript` |
+| [`PreferencesManager.swift`](MediaKeys/PreferencesManager.swift) | Persistence (`UserDefaults`) |
+| [`StatusMenuController.swift`](MediaKeys/StatusMenuController.swift) | Menu bar UI |
+| [`Localizable.xcstrings`](MediaKeys/Localizable.xcstrings) | UI strings (en + fr) |
+| [`InfoPlist.xcstrings`](MediaKeys/InfoPlist.xcstrings) | Info.plist strings (en + fr) |
 
-### Décisions techniques
+### Technical decisions
 
-- **Pas d'`osascript` pour lire l'état** — trop lent (~200 ms par appel). À la place, `PlaybackStateCache` écoute en continu :
+- **No `osascript` to read state** — too slow (~200 ms per call). Instead, `PlaybackStateCache` listens continuously to:
   - `com.spotify.client.PlaybackStateChanged`
   - `com.apple.Music.playerInfo`
-- **`osascript` uniquement pour envoyer** les commandes (`playpause`, `next track`, `previous track` / `back track`).
-- **Event tap** de type `.cgSessionEventTap` en `.headInsertEventTap` ; consomme les key-down média, laisse passer le reste (volume, etc.).
+- **`osascript` only to send** commands (`playpause`, `next track`, `previous track` / `back track`).
+- **Event tap** of type `.cgSessionEventTap` at `.headInsertEventTap`; consumes media key-downs, passes everything else through (volume, etc.).
 
-### Routage en mode `both`
+### `both` mode routing
 
-- **Play/Pause** : si une seule app joue → elle reçoit ; si les deux jouent → les deux reçoivent ; sinon → reprise sur `lastPlayingApp` (Spotify par défaut).
-- **Suivant / Précédent** : envoyé uniquement aux apps actuellement en lecture.
+- **Play/Pause**: if a single app is playing → it receives; if both play → both receive; otherwise → resume on `lastPlayingApp` (Spotify by default).
+- **Next / Previous**: sent only to apps currently playing.
+
+---
+
+## Localization
+
+UI strings live in [`Localizable.xcstrings`](MediaKeys/Localizable.xcstrings) (String Catalog). System permission strings live in [`InfoPlist.xcstrings`](MediaKeys/InfoPlist.xcstrings). English is the source language; French is provided. Adding a new language is just adding a column in Xcode's String Catalog editor.
 
 ---
 
 ## Permissions
 
-L'app demande :
-- **Accessibilité** : obligatoire (event tap système).
-- **Apple Events** vers Spotify & Music : pour envoyer les commandes via `osascript`.
+The app requests:
+- **Accessibility**: required (system event tap).
+- **Apple Events** to Spotify & Music: to send commands via `osascript`.
 
-L'entitlement `com.apple.security.automation.apple-events` est défini dans [`MediaKeys.entitlements`](MediaKeys/MediaKeys.entitlements).
+The `com.apple.security.automation.apple-events` entitlement is set in [`MediaKeys.entitlements`](MediaKeys/MediaKeys.entitlements).
 
 ---
 
-## Licence
+## License
 
-MIT — voir [LICENSE](LICENSE).
+MIT — see [LICENSE](LICENSE).
