@@ -30,17 +30,10 @@ A `♪` icon appears in the menu bar. The menu offers the redirect mode and glob
 ### Requirements
 
 - macOS 13 (Ventura) or newer
-- Xcode 15+ (for building from source — String Catalogs)
 
-### Build
+### Download
 
-```bash
-git clone https://github.com/Kitround/MediaKeys.git
-cd MediaKeys
-open MediaKeys.xcodeproj
-```
-
-Then in Xcode: **Product → Run** (⌘R).
+Grab the latest `MediaKeys.zip` from the [Releases page](https://github.com/Kitround/MediaKeys/releases), unzip it, and drag **MediaKeys.app** into `/Applications`.
 
 ### First launch
 
