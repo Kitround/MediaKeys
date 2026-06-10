@@ -7,9 +7,9 @@ enum TargetMode: String {
 
     var displayName: String {
         switch self {
-        case .spotify: return "Spotify"
-        case .music:   return "Apple Music"
-        case .both:    return "Spotify + Apple Music"
+        case .spotify: return String(localized: "Spotify", comment: "Target mode: Spotify only")
+        case .music:   return String(localized: "Apple Music", comment: "Target mode: Apple Music only")
+        case .both:    return String(localized: "Spotify + Apple Music", comment: "Target mode: both apps")
         }
     }
 

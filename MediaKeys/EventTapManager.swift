@@ -91,11 +91,11 @@ class EventTapManager {
         case NX_KEYTYPE_REWIND:
             mediaKey = .rewind
         default:
-            // Touche non gérée (volume, etc.) → laisser passer
+            // Unhandled key (volume, etc.) → pass through
             return Unmanaged.passRetained(event)
         }
 
-        // Touche média reconnue : on consomme key-down, on laisse passer key-up
+        // Recognized media key: consume key-down, pass through key-up
         if isKeyDown, let key = mediaKey {
             DispatchQueue.main.async { self.onMediaKey?(key) }
             return nil
@@ -106,10 +106,13 @@ class EventTapManager {
 
     private func showAccessibilityAlert() {
         let alert = NSAlert()
-        alert.messageText = "Permission requise"
-        alert.informativeText = "MediaKeys a besoin d'acces a l'Accessibilite.\n\nAllez dans Preferences Systeme -> Securite -> Accessibilite et ajoutez MediaKeys."
-        alert.addButton(withTitle: "Ouvrir les preferences")
-        alert.addButton(withTitle: "Annuler")
+        alert.messageText = String(localized: "Permission required", comment: "Accessibility permission alert title")
+        alert.informativeText = String(
+            localized: "MediaKeys needs Accessibility access.\n\nOpen System Settings → Privacy & Security → Accessibility and add MediaKeys.",
+            comment: "Accessibility permission alert body"
+        )
+        alert.addButton(withTitle: String(localized: "Open Settings", comment: "Open System Settings button"))
+        alert.addButton(withTitle: String(localized: "Cancel", comment: "Cancel button"))
         let response = alert.runModal()
         if response == .alertFirstButtonReturn {
             NSWorkspace.shared.open(URL(string: "x-apple.systempreferences:com.apple.preference.security?Privacy_Accessibility")!)

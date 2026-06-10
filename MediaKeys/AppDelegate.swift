@@ -19,7 +19,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         print("🚀 applicationDidFinishLaunching")
         NSApp.setActivationPolicy(.accessory)
 
-        _ = PlaybackStateCache.shared  // démarre l'écoute des notifications Spotify & Music
+        _ = PlaybackStateCache.shared  // start listening to Spotify & Music notifications
 
         statusMenuController = StatusMenuController()
 

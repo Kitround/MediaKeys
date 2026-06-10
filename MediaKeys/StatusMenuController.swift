@@ -28,7 +28,11 @@ class StatusMenuController: NSObject {
         let menu = NSMenu()
         let prefs = PreferencesManager.shared
 
-        let title = NSMenuItem(title: "Rediriger vers :", action: nil, keyEquivalent: "")
+        let title = NSMenuItem(
+            title: String(localized: "Redirect to:", comment: "Menu section header"),
+            action: nil,
+            keyEquivalent: ""
+        )
         title.isEnabled = false
         menu.addItem(title)
 
@@ -42,17 +46,20 @@ class StatusMenuController: NSObject {
 
         menu.addItem(.separator())
 
-        let pause = NSMenuItem(
-            title: prefs.isPaused ? "Reprendre" : "Pause",
-            action: #selector(togglePause),
-            keyEquivalent: "p"
-        )
+        let pauseTitle = prefs.isPaused
+            ? String(localized: "Resume", comment: "Resume interception menu item")
+            : String(localized: "Pause", comment: "Pause interception menu item")
+        let pause = NSMenuItem(title: pauseTitle, action: #selector(togglePause), keyEquivalent: "p")
         pause.target = self
         menu.addItem(pause)
 
         menu.addItem(.separator())
 
-        menu.addItem(NSMenuItem(title: "Quitter MediaKeys", action: #selector(NSApplication.terminate(_:)), keyEquivalent: "q"))
+        menu.addItem(NSMenuItem(
+            title: String(localized: "Quit MediaKeys", comment: "Quit menu item"),
+            action: #selector(NSApplication.terminate(_:)),
+            keyEquivalent: "q"
+        ))
 
         return menu
     }

@@ -5,7 +5,7 @@
     <key>LSUIElement</key>
     <true/>
     <key>NSAccessibilityUsageDescription</key>
-    <string>MediaKeys a besoin d&apos;accès à l&apos;Accessibilité pour intercepter les touches média.</string>
+    <string>MediaKeys needs Accessibility access to intercept media keys.</string>
     <key>NSAppleScriptEnabled</key>
     <true/>
     <key>CFBundleName</key>

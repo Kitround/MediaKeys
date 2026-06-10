@@ -5,11 +5,11 @@ enum TargetApp: String, CaseIterable {
     case music   = "Music"
 }
 
-// MARK: - Cache d'état mis à jour passivement par les notifications des apps
+// MARK: - Playback state cache updated passively by app notifications
 
-/// Spotify et Apple Music diffusent leur état en temps réel via DistributedNotificationCenter.
-/// On écoute ces notifications pour tenir un cache toujours à jour — zéro appel osascript
-/// au moment du clic, donc zéro latence.
+/// Spotify and Apple Music broadcast their state in real time via DistributedNotificationCenter.
+/// We listen to those notifications to keep an always-up-to-date cache — no osascript call
+/// at click time, hence zero latency.
 final class PlaybackStateCache {
     static let shared = PlaybackStateCache()
 
@@ -19,7 +19,7 @@ final class PlaybackStateCache {
     private init() {
         let dnc = DistributedNotificationCenter.default()
 
-        // Spotify : "com.spotify.client.PlaybackStateChanged"
+        // Spotify: "com.spotify.client.PlaybackStateChanged"
         // userInfo["Player State"] == "Playing" | "Paused" | "Stopped"
         dnc.addObserver(
             self,
@@ -29,7 +29,7 @@ final class PlaybackStateCache {
             suspensionBehavior: .deliverImmediately
         )
 
-        // Apple Music : "com.apple.Music.playerInfo"
+        // Apple Music: "com.apple.Music.playerInfo"
         // userInfo["Player State"] == "Playing" | "Paused" | "Stopped"
         dnc.addObserver(
             self,
@@ -80,7 +80,7 @@ struct MediaCommandSender {
         if cache.spotifyPlaying { runOsascript(script(for: key, target: .spotify)) }
         if cache.musicPlaying   { runOsascript(script(for: key, target: .music)) }
         if !cache.spotifyPlaying && !cache.musicPlaying {
-            print("⏭ navigation ignorée : aucune app en lecture")
+            print("⏭ navigation ignored: no app currently playing")
         }
     }
 
