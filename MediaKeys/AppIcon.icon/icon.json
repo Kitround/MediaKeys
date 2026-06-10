@@ -1,0 +1,39 @@
+{
+  "fill" : {
+    "solid" : "extended-gray:0.00000,1.00000"
+  },
+  "groups" : [
+    {
+      "layers" : [
+        {
+          "fill" : {
+            "solid" : "display-p3:0.97054,0.97790,1.00000,1.00000"
+          },
+          "image-name" : "user-music 2.svg",
+          "name" : "user-music 2",
+          "position" : {
+            "scale" : 24.84,
+            "translation-in-points" : [
+              37,
+              -42
+            ]
+          }
+        }
+      ],
+      "shadow" : {
+        "kind" : "neutral",
+        "opacity" : 0.5
+      },
+      "translucency" : {
+        "enabled" : true,
+        "value" : 0.5
+      }
+    }
+  ],
+  "supported-platforms" : {
+    "circles" : [
+      "watchOS"
+    ],
+    "squares" : "shared"
+  }
+}
