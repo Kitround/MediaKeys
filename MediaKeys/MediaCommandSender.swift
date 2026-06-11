@@ -152,14 +152,19 @@ struct MediaCommandSender {
     private static func runOsascript(_ source: String) {
         DispatchQueue.global(qos: .userInteractive).async {
             let task = Process()
-            task.launchPath = "/usr/bin/osascript"
+            task.executableURL = URL(fileURLWithPath: "/usr/bin/osascript")
             task.arguments = ["-e", source]
 
             let pipe = Pipe()
             task.standardError  = pipe
             task.standardOutput = pipe
 
-            task.launch()
+            do {
+                try task.run()
+            } catch {
+                print("⚠️ osascript failed to launch: \(error)")
+                return
+            }
             task.waitUntilExit()
 
             if task.terminationStatus != 0 {

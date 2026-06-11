@@ -6,8 +6,6 @@
     <true/>
     <key>NSAccessibilityUsageDescription</key>
     <string>MediaKeys needs Accessibility access to intercept media keys.</string>
-    <key>NSAppleScriptEnabled</key>
-    <true/>
     <key>CFBundleName</key>
     <string>MediaKeys</string>
     <key>CFBundleIdentifier</key>
